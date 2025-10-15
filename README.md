@@ -1,6 +1,7 @@
 # U_Net
 My U-Net
-
+## Conda package
+ - [wandb](https://anaconda.org/conda-forge/wandb)
 ## Reference
 - [Github: milesial Pytorch-UNet](https://github.com/milesial/Pytorch-UNet)
 - [Pytorch Model Hub: U-Net for brain MRI](https://pytorch.org/hub/mateuszbuda_brain-segmentation-pytorch_unet/)
