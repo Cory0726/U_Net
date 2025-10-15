@@ -36,7 +36,7 @@ def train_model(
         amp: bool = False,  # whether mixed precision (AMP) is enabled, True if torch.cuda.amp is used
         weight_decay: float = 1e-8,  # Help prevent overfitting
         momentum: float = 0.999,  # Momentum tern for smoother, faster convergence
-        gradient_clipping: float = 1.0,
+        gradient_clipping: float = 1.0,  # Clip gradients to prevent exploding gradients backpropagation
 ):
     # ========== 1. Create dataset ==========
     try:
