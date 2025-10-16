@@ -19,9 +19,37 @@ from unet import UNet
 from utils.data_loading import BasicDataset, CarvanaDataset
 from utils.dice_score import dice_loss
 
+
+# =========================
+# User configuration
+# =========================
+
+# Data distribution
 dir_img = Path('./data/imgs/')
 dir_mask = Path('./data/masks/')
 dir_checkpoint = Path('./checkpoints/')
+# Load the weights of model from an existential .pth file
+load_file = False
+load_file_path = ""
+
+# Configurate the U-Net's argument
+# - n_channels : 3 for RGB images, 1 for Gray-scale images
+# - n_classes : number of segmentation classes
+# - bilinear : True for using bilinear upsampling, otherwise use transposed convolution
+unet_config = dict(
+    n_channels = 3,
+    n_classes = 2,
+    bilinear = False
+)
+# Configurate the traing's argument
+train_config = dict(
+    epochs = 5,
+    batch_size = 1,
+    learning_rate = 1e-5,
+    img_scale = 0.5,
+    val_percent= 0.1,
+    amp = False
+)
 
 
 def train_model(
@@ -38,7 +66,11 @@ def train_model(
         momentum: float = 0.999,  # Momentum tern for smoother, faster convergence
         gradient_clipping: float = 1.0,  # Clip gradients to prevent exploding gradients backpropagation
 ):
-    # ========== 1. Create dataset ==========
+
+    # =========================
+    #  Create dataset
+    # =========================
+
     try:
         # Use the format of CarvanaDataset
         dataset = CarvanaDataset(dir_img, dir_mask, img_scale)
@@ -46,12 +78,17 @@ def train_model(
         # Use the format of BasicDataset
         dataset = BasicDataset(dir_img, dir_mask, img_scale)
 
-    # ========== 2. Split into train / validation partitions ==========
+    # =========================
+    # Split into train / validation partitions
+    # =========================
+
     n_val = int(len(dataset) * val_percent)
     n_train = len(dataset) - n_val
     train_set, val_set = random_split(dataset, [n_train, n_val], generator=torch.Generator().manual_seed(0))
 
-    # ========== 3. Create data loaders ==========
+    # =========================
+    # Create data loaders
+    # =========================
 
     # - pin_memory : If True and using a GPU, keeps data in page-locked memory,
     # speeds up host-to-GPU transfer
@@ -61,6 +98,10 @@ def train_model(
 
     # - drop_last : Drop the last incomplete batch if its size < batch_size
     val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
+
+    # =========================
+    # Create the W&B tool and the python logger for tracking and visualizing
+    # =========================
 
     # Initialize a Weights & Biases run.
     # This creates/attaches to a run and let us log hyperparameters, metrics, and artifacts for reproducibility.
@@ -95,7 +136,9 @@ def train_model(
         Mixed Precision: {amp}
     ''')
 
-    # ========== 4. Set up the optimizer and the loss ==========
+    # =========================
+    # Set up the optimizer and the loss
+    # =========================
 
     # - RMSprop is a variant of gradient descent that adapts the learning rate
     #   for each parameter individually, which helps stabilize training.
@@ -128,7 +171,10 @@ def train_model(
     # - Counter tracking the total number of batches processed
     global_step = 0
 
-    # ========== 5. Begin training ==========
+    # =========================
+    #　Begin training
+    # =========================
+
     for epoch in range(1, epochs + 1):
         model.train()
         epoch_loss = 0
@@ -250,20 +296,18 @@ def get_args():
 
 
 if __name__ == '__main__':
+
     args = get_args()
 
-    # Configure logging format and level (INFO means standard progress messages)
+    # Set logging format and level (INFO means standard progress messages)
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     # Auto select the best available device (GPU if available, otherwise CPU)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Using device {device}')
 
     # Set U-Net model according to dataset configuration
-    # - n_channels : 3 for RGB images, 1 for Gray-scale images
-    # - n_classes : number of segmentation classes
-    # - bilinear : True for using bilinear upsampling,
-    #   otherwise use transposed convolution
-    model = UNet(n_channels=3, n_classes=args.classes, bilinear=args.bilinear)
+
+    model = UNet(**unet_config)
     # Optimize memory layout for better GPU performance
     # (channels_last improves AMP efficiency)
     model = model.to(memory_format=torch.channels_last)
@@ -274,24 +318,15 @@ if __name__ == '__main__':
                 f'\t{model.n_classes} output channels (classes)\n'
                 f'\t{"Bilinear" if model.bilinear else "Transposed conv"} upscaling')
 
-    if args.load:
-        state_dict = torch.load(args.load, map_location=device)
+    if load_file:
+        state_dict = torch.load(load_file_path, map_location=device)
         del state_dict['mask_values']
         model.load_state_dict(state_dict)
-        logging.info(f'Model loaded from {args.load}')
+        logging.info(f'Model loaded from {load_file_path}')
 
     model.to(device=device)
     try:
-        train_model(
-            model=model,
-            epochs=args.epochs,
-            batch_size=args.batch_size,
-            learning_rate=args.lr,
-            device=device,
-            img_scale=args.scale,
-            val_percent=args.val / 100,
-            amp=args.amp
-        )
+        train_model(model=model, device=device, **train_config)
     except torch.cuda.OutOfMemoryError:
         logging.error('Detected OutOfMemoryError! '
                     'Enabling checkpointing to reduce memory usage, but this slows down training. '
@@ -299,13 +334,4 @@ if __name__ == '__main__':
         torch.cuda.empty_cache()  # Release cached blocks in the CUDA memory allocator
         model.use_checkpointing()  # Enable gradient checkpointing (trade compute for memory)
         # Retry training with memory-saving settings
-        train_model(
-            model=model,
-            epochs=args.epochs,
-            batch_size=args.batch_size,
-            learning_rate=args.lr,
-            device=device,
-            img_scale=args.scale,
-            val_percent=args.val / 100,
-            amp=args.amp
-        )
+        train_model(model=model, device=device, **train_config)
