@@ -1,6 +1,10 @@
 # U_Net
 My U-Net
-## Conda package
+## Install packages by conda installation
+```bash
+conda install pytorch::pytorch
+conda install pytorch::torchvision
+```
  - [wandb](https://anaconda.org/conda-forge/wandb)
 ## Reference
 - [Github: milesial Pytorch-UNet](https://github.com/milesial/Pytorch-UNet)
