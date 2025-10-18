@@ -5,6 +5,7 @@ My U-Net
 conda install pytorch::pytorch
 conda install pytorch::torchvision
 conda install conda-forge::wandb
+conda install conda-forge::tqdm
 ```
 
 ## Reference
