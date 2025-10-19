@@ -13,26 +13,28 @@ My notes for U-Net.
   ```
 
 ## Issue
-- Pydantic 2.12+, `Field()` , `UNSUPPORTED_STANDALONE_FIELDINFO_ATTRIBUTES` **warning**
-  - Issue description
-    ```bash
-    pydantic.warnings.UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
-    ```
-  - Root cause  
-    The issue in `wandb/_pydantic/field_types.py` line 16 and 20:
-    ```python
-    Typename = Annotated[T, Field(repr=False, frozen=True, alias="__typename")]
-    GQLId = Annotated[StrictStr, Field(repr=False, frozen=True)]
-    ```
-    In Pydantic 2.12, `repr` and `frozen` parameters have no effect when used in `Annotated` type aliases that are later combined with another `Field()` call in model definitions. These parameters are listed in Pydantic's `UNSUPPORTED_STANDALONE_FIELDINFO_ATTRIBUTTES`.
-  - Proposed fix
-    Remove the ineffective parameters from the type aliases:
-    ```python
-    Typename = Annotated[T, Field(alias="__typename")]
-    ```
-    ```python
-    GQLId = Annotated[StrictStr, Field()]
-    ```
+### Pydantic 2.12+, `Field()` , `UNSUPPORTED_STANDALONE_FIELDINFO_ATTRIBUTES` warning
+- Issue description
+  ```bash
+  pydantic.warnings.UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  ```
+- Root cause  
+  The issue in `wandb/_pydantic/field_types.py` line 16 and 20:
+  ```python
+  Typename = Annotated[T, Field(repr=False, frozen=True, alias="__typename")]
+  GQLId = Annotated[StrictStr, Field(repr=False, frozen=True)]
+  ```
+  In Pydantic 2.12, `repr` and `frozen` parameters have no effect when used in `Annotated` type aliases that are later combined with another `Field()` call in model definitions. These parameters are listed in Pydantic's `UNSUPPORTED_STANDALONE_FIELDINFO_ATTRIBUTTES`.
+- Proposed fix
+  Remove the ineffective parameters from the type aliases:
+  ```python
+  Typename = Annotated[T, Field(alias="__typename")]
+  ```
+  ```python
+  GQLId = Annotated[StrictStr, Field()]
+  ```
+  This changes has no behavioralimpact since these parameters were already being ignored by Pydantic, but it eliminates the warning.
+  
 
 ## Reference
 - [Github: milesial Pytorch-UNet](https://github.com/milesial/Pytorch-UNet)
