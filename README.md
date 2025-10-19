@@ -6,6 +6,7 @@ conda install pytorch::pytorch
 conda install pytorch::torchvision
 conda install conda-forge::wandb
 conda install conda-forge::tqdm
+conda install conda-forge::matplotlib
 ```
 
 ## Reference
