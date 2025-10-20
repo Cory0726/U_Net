@@ -34,7 +34,16 @@ My notes for U-Net.
   GQLId = Annotated[StrictStr, Field()]
   ```
   This changes has no behavioralimpact since these parameters were already being ignored by Pydantic, but it eliminates the warning.
-  
+
+### Method is deprecated
+`torch.cuda.amp.GradScaler(args...)` is deprecated.
+```python
+# Change
+grad_scaler = torch.cuda.amp.GradScaler(enabled=amp)
+# To
+grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
+```
+
 ### 虛擬記憶體不足
 - 建議**虛擬記憶體**的起始大小和最大值可以設定成RAM的1倍和2.5倍
 - 舉例 : 電腦的RAM 是 16 GB (1 GB = 1024 MB), 那起始大小就設 16384 MB, 最大值則設 40960 MB
