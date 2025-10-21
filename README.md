@@ -3,6 +3,7 @@ My notes for U-Net.
 
 - [Install packages by conda installation](#install-packages-by-conda-installation)
 - [Issue](#issue)
+- [Usage](#usage)
 - [Reference](#reference)
 
 ## Install packages by conda installation
@@ -52,6 +53,9 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
 ### 虛擬記憶體不足
 - 建議**虛擬記憶體**的起始大小和最大值可以設定成RAM的1倍和2.5倍
 - 舉例 : 電腦的RAM 是 16 GB (1 GB = 1024 MB), 那起始大小就設 16384 MB, 最大值則設 40960 MB
+
+## Usage
+
 
 ## Reference
 - [Github: milesial Pytorch-UNet](https://github.com/milesial/Pytorch-UNet)
