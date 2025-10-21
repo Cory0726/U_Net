@@ -19,8 +19,8 @@ My notes for U-Net.
     conda install conda-forge::tqdm
     conda install conda-forge::matplotlib
     ```
-- Anaconda env file: *environment.yaml*
-- Anaconda pkg list file: *requirement.txt*
+- Env file: *environment.yaml*
+- Pkg list file: *requirement.txt*
 
 ## Issue
 ### Pydantic 2.12+, `Field()` , `UNSUPPORTED_STANDALONE_FIELDINFO_ATTRIBUTES` warning
