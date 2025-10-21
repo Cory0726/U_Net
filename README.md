@@ -67,6 +67,7 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
   ```bash
   python predict.py -i image.jpg -o output.jpg
   ```
+  ![Train command help](./images/train_help.png)
   
 
 ## Reference
