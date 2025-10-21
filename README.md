@@ -4,6 +4,8 @@ My notes for U-Net.
 - [Install packages by conda installation](#install-packages-by-conda-installation)
 - [Issue](#issue)
 - [Usage](#usage)
+  - [Training](#training)
+  - [Prediction](#prediction) 
 - [Reference](#reference)
 
 ## Install packages by conda installation
@@ -55,8 +57,17 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
 - 舉例 : 電腦的RAM 是 16 GB (1 GB = 1024 MB), 那起始大小就設 16384 MB, 最大值則設 40960 MB
 
 ## Usage
+### Training
+- By default, the `scale` is 0.5, so if you wish to obtain better results, set it to 1.(but use more memory)
+- 
+### Prediction
+- You can specify which model file to use with `--model MODEL.pth`.
+- To predict a single image and save it
+  ```bash
+  python predict.py -i image.jpg -o output.jpg
+  ```
 
-
+- 
 ## Reference
 - [Github: milesial Pytorch-UNet](https://github.com/milesial/Pytorch-UNet)
 - [Pytorch Model Hub: U-Net for brain MRI](https://pytorch.org/hub/mateuszbuda_brain-segmentation-pytorch_unet/)
