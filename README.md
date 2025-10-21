@@ -58,8 +58,8 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
 
 ## Usage
 ### Training
-- By default, the `scale` is 0.5, so if you wish to obtain better results, set it to 1.(but use more memory)
-- 
+- By default, the `scale` is **0.5**, so if you wish to obtain better results, set it to **1**.(but use more memory)
+
 ### Prediction
 - You can specify which model file to use with `--model MODEL.pth`.
 - To predict a single image and save it
@@ -67,7 +67,6 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
   python predict.py -i image.jpg -o output.jpg
   ```
 
-- 
 ## Reference
 - [Github: milesial Pytorch-UNet](https://github.com/milesial/Pytorch-UNet)
 - [Pytorch Model Hub: U-Net for brain MRI](https://pytorch.org/hub/mateuszbuda_brain-segmentation-pytorch_unet/)
