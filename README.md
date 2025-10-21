@@ -59,7 +59,7 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
 ## Usage
 ### Training
 - By default, the `scale` is **0.5**, so if you wish to obtain better results, set it to **1**.(but use more memory)
-  ![Train command help](./images/train_help.png)
+  ![Train command](./images/train_command.png)
 
 ### Prediction
 - You can specify which model file to use with `--model MODEL.pth`.
@@ -67,7 +67,7 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
   ```bash
   python predict.py -i image.jpg -o output.jpg
   ```
-  ![Train command help](./images/train_help.png)
+  ![Predict command](./images/predict_command.png)
   
 
 ## Reference
