@@ -59,6 +59,7 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
 ## Usage
 ### Training
 - By default, the `scale` is **0.5**, so if you wish to obtain better results, set it to **1**.(but use more memory)
+- ![test](./images/train_help.png)
 
 ### Prediction
 - You can specify which model file to use with `--model MODEL.pth`.
