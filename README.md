@@ -21,7 +21,6 @@ My notes for U-Net.
     conda install conda-forge::opencv
     ```
 - Env file: *environment.yaml*
-- Pkg list file: *requirement.txt*
 
 ## Issue
 ### Pydantic 2.12+, `Field()` , `UNSUPPORTED_STANDALONE_FIELDINFO_ATTRIBUTES` warning
