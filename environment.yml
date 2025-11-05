@@ -140,4 +140,4 @@ dependencies:
       - sympy==1.14.0
       - torch==2.9.0+cu130
       - torchvision==0.24.0+cu130
-prefix: C:\Users\lkfu5\anaconda3\envs\u_net
+prefix: C:\Users\User\anaconda3\envs\u_net
