@@ -18,6 +18,7 @@ My notes for U-Net.
     conda install conda-forge::wandb
     conda install conda-forge::tqdm
     conda install conda-forge::matplotlib
+    conda install conda-forge::opencv
     ```
 - Env file: *environment.yaml*
 - Pkg list file: *requirement.txt*
