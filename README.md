@@ -18,7 +18,7 @@ My notes for U-Net.
     conda install conda-forge::wandb
     conda install conda-forge::tqdm
     conda install conda-forge::matplotlib
-    conda install conda-forge::opencv
+    conda install -c anaconda opencv
     ```
 - Env file: *environment.yaml*
 
@@ -58,12 +58,12 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
 - 建議**虛擬記憶體**的起始大小和最大值可以設定成RAM的1倍和2.5倍
 - 舉例 : 電腦的RAM 是 16 GB (1 GB = 1024 MB), 那起始大小就設 16384 MB, 最大值則設 40960 MB
 
-## Usage
-### Training
+## Scripts
+### train.py
 - By default, the `scale` is **0.5**, so if you wish to obtain better results, set it to **1**. ( but use more memory )
   ![Train command](./images/train_command.png)
 
-### Prediction
+### predict.py
 - You can specify which model file to use with `--model MODEL.pth`.
 - To predict a single image and save it
   ```bash
