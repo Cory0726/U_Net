@@ -6,34 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4737e59e-2804-4af0-baef-2899b794ade3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_04.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_05.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_06.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_07.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_08.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_09.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_11.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_12.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_13.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_14.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_15.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/imgs/0cdf5b5d0ce1_16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_04_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_05_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_06_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_07_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_08_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_09_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_10_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_11_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_12_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_13_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_14_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_15_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/masks/0cdf5b5d0ce1_16_mask.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fdc2c87853ce_12.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fdc2c87853ce_12_OUT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/u_net_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/img_processing.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
