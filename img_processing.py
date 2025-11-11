@@ -89,4 +89,16 @@ def rename_and_move_files(input_dir, output_dir, base_name="img", start_num=1):
 
 # Main
 if __name__ == "__main__":
-    binarize_images("images")
+    rename_and_move_files(
+        "C:/Users/lkfu5/Desktop/Temp/Temp_egohands/unet/images",
+        "C:/Users/lkfu5/Lab417_cory/Dataset/Dataset_Hand/Process_egohands/Puzzle/imgs",
+        "puzzle_office_img",
+        301
+    )
+
+    rename_and_move_files(
+        "C:/Users/lkfu5/Desktop/Temp/Temp_egohands/unet/masks",
+        "C:/Users/lkfu5/Lab417_cory/Dataset/Dataset_Hand/Process_egohands/Puzzle/masks",
+        "puzzle_office_img_mask",
+        301
+    )
