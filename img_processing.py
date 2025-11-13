@@ -1,7 +1,9 @@
 import cv2
 import os
 import shutil
+import numpy as np
 from pathlib import Path
+from PIL import Image
 
 def binarize_images(input_dir, output_dir=None, threshold=127):
     """
@@ -87,18 +89,89 @@ def rename_and_move_files(input_dir, output_dir, base_name="img", start_num=1):
 
     print(f" Renamed and moved {count - start_num} files to: {output_dir}")
 
+def resize_and_convert_image(input_folder, output_folder, target_size):
+    """
+    Resize normal images and convert to PNG (RGB).
+    Args:
+        input_folder (str): Path to input images.
+        output_folder (str): Path to save PNG output.
+        target_size (tuple): (width, height)
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    valid_ext = ('.jpg', '.jpeg', '.png', '.gif', '.tif', '.tiff')
+
+    for filename in os.listdir(input_folder):
+        if not filename.lower().endswith(valid_ext):
+            continue
+
+        in_path = os.path.join(input_folder, filename)
+        out_name = os.path.splitext(filename)[0] + ".png"
+        out_path = os.path.join(output_folder, out_name)
+
+        try:
+            with Image.open(in_path) as img:
+
+                # If GIF: take first frame
+                if getattr(img, "is_animated", False):
+                    img.seek(0)
+
+                # Convert to RGB
+                img = img.convert("RGB")
+
+                # Resize with bilinear interpolation (smooth)
+                img = img.resize(target_size, Image.BILINEAR)
+
+                # Save as PNG
+                img.save(out_path, format="PNG")
+                print(f"[IMAGE] {filename} → {out_path}")
+
+        except Exception as e:
+            print(f"[IMAGE] Failed {filename}: {e}")
+
+def resize_and_convert_mask(input_folder, output_folder, target_size):
+    """
+    Resize segmentation masks and convert to PNG.
+    Args:
+        input_folder (str): Path to original masks.
+        output_folder (str): Path to save resized PNG masks.
+        target_size (tuple): (width, height)
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    valid_ext = ('.jpg', '.jpeg', '.png', '.gif', '.tif', '.tiff')
+
+    for filename in os.listdir(input_folder):
+        if not filename.lower().endswith(valid_ext):
+            continue
+
+        in_path = os.path.join(input_folder, filename)
+        out_name = os.path.splitext(filename)[0] + ".png"
+        out_path = os.path.join(output_folder, out_name)
+
+        try:
+            with Image.open(in_path) as img:
+
+                # Handle animated images (GIF)
+                if getattr(img, "is_animated", False):
+                    img.seek(0)
+
+                # Convert to grayscale to unify mode
+                if img.mode not in ["L", "I", "F"]:
+                    img = img.convert("L")
+
+                # Resize with NEAREST to preserve discrete mask values
+                img = img.resize(target_size, Image.NEAREST)
+
+                # Save without any binarization or value change
+                img.save(out_path, format="PNG")
+                print(f"[MASK] {filename} → {out_path}")
+
+        except Exception as e:
+            print(f"[MASK] Failed {filename}: {e}")
+
 # Main
 if __name__ == "__main__":
-    rename_and_move_files(
-        "C:/Users/lkfu5/Desktop/Temp/Temp_egohands/unet/images",
-        "C:/Users/lkfu5/Lab417_cory/Dataset/Dataset_Hand/Process_egohands/Puzzle/imgs",
-        "puzzle_office_img",
-        301
-    )
-
-    rename_and_move_files(
-        "C:/Users/lkfu5/Desktop/Temp/Temp_egohands/unet/masks",
-        "C:/Users/lkfu5/Lab417_cory/Dataset/Dataset_Hand/Process_egohands/Puzzle/masks",
-        "puzzle_office_img_mask",
-        301
+    resize_and_convert_mask(
+        input_folder="./data/masks",
+        output_folder="./data/resized_masks",
+        target_size=(512, 512)
     )
