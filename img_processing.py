@@ -44,18 +44,20 @@ def binarize_images(input_dir, output_dir=None, threshold=127):
 
     print("All images have been binarized!")
 
-def rename_and_move_files(input_dir, output_dir, base_name="img", start_num=1):
+def rename_and_move_files(input_dir, output_dir, base_name="img", start_num=1, suffix=""):
     """
     Rename and move all image files from the input directory to the output directory.
     After moving, the original files in the input directory will be deleted.
 
-    New filenames will follow the pattern: base_name_0001.<extension>
+    New filenames will follow the pattern: base_name_0001<suffix>.<extension>
 
     Args:
         input_dir (str): Folder containing the original image files.
         output_dir (str): Destination folder for renamed images.
         base_name (str): Base name (prefix) for renamed files. Default is 'image'.
         start_num (int): Starting number for the new filenames. Default is 1.
+        suffix (str): String appended after the index, before file extension.
+                        e.g., "_mask", "_label". Default is "".
     """
 
     # --- Check if input directory exists ---
@@ -78,7 +80,7 @@ def rename_and_move_files(input_dir, output_dir, base_name="img", start_num=1):
     for f in files:
         src = os.path.join(input_dir, f)
         ext = os.path.splitext(f)[1]              # Get file extension
-        new_name = f"{base_name}_{count:05d}{ext}" # Format: image_00001.jpg
+        new_name = f"{base_name}_{count:05d}{suffix}{ext}" # Format: image_00001.jpg
         dst = os.path.join(output_dir, new_name)
 
         # Move the file (this automatically deletes it from input_dir)
@@ -170,8 +172,33 @@ def resize_and_convert_mask(input_folder, output_folder, target_size):
 
 # Main
 if __name__ == "__main__":
+    # Process imgs
+    rename_and_move_files(
+        input_dir="C:/Users/lkfu5/PycharmProjects/Temp/Images",
+        output_dir="C:/Users/lkfu5/PycharmProjects/Temp/imgs_renamed",
+        base_name="img",
+        start_num=0
+    )
+    resize_and_convert_image(
+        input_folder="C:/Users/lkfu5/PycharmProjects/Temp/imgs_renamed",
+        output_folder="C:/Users/lkfu5/PycharmProjects/Temp/imgs_renamed_resized",
+        target_size=(640, 480)
+    )
+    # Process masks
+    rename_and_move_files(
+        input_dir="C:/Users/lkfu5/PycharmProjects/Temp/Masks",
+        output_dir="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed",
+        base_name="img_mask",
+        start_num=0,
+        suffix="_mask"
+    )
+    binarize_images(
+        input_dir="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed",
+        output_dir="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed_binarized",
+        threshold=127
+    )
     resize_and_convert_mask(
-        input_folder="./data/masks",
-        output_folder="./data/resized_masks",
-        target_size=(512, 512)
+        input_folder="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed_binarized",
+        output_folder="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed_binarized_resized",
+        target_size=(640, 480)
     )
