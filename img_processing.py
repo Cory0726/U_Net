@@ -174,31 +174,21 @@ def resize_and_convert_mask(input_folder, output_folder, target_size):
 if __name__ == "__main__":
     # Process imgs
     rename_and_move_files(
-        input_dir="C:/Users/lkfu5/PycharmProjects/Temp/Images",
-        output_dir="C:/Users/lkfu5/PycharmProjects/Temp/imgs_renamed",
+        input_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Temp/imgs",
+        output_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/imgs",
         base_name="img",
         start_num=0
     )
-    resize_and_convert_image(
-        input_folder="C:/Users/lkfu5/PycharmProjects/Temp/imgs_renamed",
-        output_folder="C:/Users/lkfu5/PycharmProjects/Temp/imgs_renamed_resized",
-        target_size=(640, 480)
-    )
     # Process masks
     rename_and_move_files(
-        input_dir="C:/Users/lkfu5/PycharmProjects/Temp/Masks",
-        output_dir="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed",
-        base_name="img_mask",
+        input_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Temp/masks",
+        output_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/masks_renamed",
+        base_name="img",
         start_num=0,
         suffix="_mask"
     )
     binarize_images(
-        input_dir="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed",
-        output_dir="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed_binarized",
+        input_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/masks_renamed",
+        output_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/masks",
         threshold=127
-    )
-    resize_and_convert_mask(
-        input_folder="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed_binarized",
-        output_folder="C:/Users/lkfu5/PycharmProjects/Temp/masks_renamed_binarized_resized",
-        target_size=(640, 480)
     )
