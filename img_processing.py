@@ -1,5 +1,6 @@
 import cv2
 import os
+import glob
 import shutil
 import numpy as np
 from pathlib import Path
@@ -170,25 +171,138 @@ def resize_and_convert_mask(input_folder, output_folder, target_size):
         except Exception as e:
             print(f"[MASK] Failed {filename}: {e}")
 
+def dataset_mask_filter(image_dir, mask_dir, mask_ratio_range=(0.01, 0.9)):
+    """
+    Delete image + mask pairs based on the foreground ratio of binary masks (0/255).
+
+    Args:
+        image_dir (str): Directory containing original images.
+        mask_dir (str): Directory containing mask images. Mask filenames must end with "_mask".
+        mask_ratio_range (tuple): (min_ratio, max_ratio). Samples outside this range will be deleted.
+
+    Returns:
+        dict: Summary statistics.
+    """
+    min_ratio, max_ratio = mask_ratio_range
+
+    mask_paths = glob.glob(os.path.join(mask_dir, "*_mask.*"))
+
+    total_masks = 0
+    removed = 0
+    kept = 0
+
+    for mask_path in mask_paths:
+        total_masks += 1
+
+        # Read mask (binary 0/255)
+        mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+        if mask is None:
+            print(f"[WARN] Failed to read mask: {mask_path}")
+            continue
+
+        total_pixels = mask.size
+        fg_pixels = np.count_nonzero(mask == 255)
+        ratio = fg_pixels / float(total_pixels)
+
+        # Check if outside allowed ratio range
+        if ratio < min_ratio or ratio > max_ratio:
+            removed += 1
+
+            # Determine corresponding image filename
+            dirname, filename = os.path.split(mask_path)
+            stem, ext = os.path.splitext(filename)
+
+            if not stem.endswith("_mask"):
+                print(f"[WARN] Mask filename does not end with '_mask': {filename}")
+                continue
+
+            image_stem = stem[:-5]  # Remove "_mask"
+            image_path = os.path.join(image_dir, image_stem + ext)
+
+            print(f"[DELETE] Mask foreground ratio = {ratio:.4f} (outside {min_ratio} ~ {max_ratio})")
+            print(f"         Deleting mask:  {mask_path}")
+            print(f"         Deleting image: {image_path}")
+
+            # Delete mask
+            try:
+                os.remove(mask_path)
+            except Exception as e:
+                print(f"[ERROR] Failed to delete mask: {e}")
+
+            # Delete corresponding image (if exists)
+            if os.path.exists(image_path):
+                try:
+                    os.remove(image_path)
+                except Exception as e:
+                    print(f"[ERROR] Failed to delete image: {e}")
+        else:
+            kept += 1
+
+    summary = {
+        "total_masks": total_masks,
+        "kept": kept,
+        "removed": removed,
+    }
+
+    print("\n=== Dataset Cleaning Finished ===")
+    print(f"Total mask files: {total_masks}")
+    print(f"Kept:             {kept}")
+    print(f"Removed:          {removed}")
+
+    return summary
+
+def batch_convert_jpg_to_png(src_dir: str, dst_dir: str):
+    """
+    Batch convert all .jpg files in a folder to .png format.
+
+    Args:
+        src_dir (str): Source directory containing .jpg files.
+        dst_dir (str): Destination directory to save .png files.
+
+    Notes:
+        - The function reads each JPG file using OpenCV and writes it as a PNG file.
+        - File extensions are handled automatically; only the format changes.
+        - The original JPG files are NOT deleted.
+    """
+
+    # Create destination folder if it doesn't exist
+    os.makedirs(dst_dir, exist_ok=True)
+
+    # Find all .jpg files inside the directory
+    jpg_files = glob.glob(os.path.join(src_dir, "*.jpg"))
+
+    if len(jpg_files) == 0:
+        print("[INFO] No JPG files found in:", src_dir)
+        return
+
+    for jpg_path in jpg_files:
+        # Extract filename and remove extension
+        filename = os.path.basename(jpg_path)
+        stem = os.path.splitext(filename)[0]
+
+        # Create PNG output path
+        png_path = os.path.join(dst_dir, stem + ".png")
+
+        # Read the image
+        img = cv2.imread(jpg_path)
+        if img is None:
+            print(f"[WARN] Could not read file: {jpg_path}")
+            continue
+
+        # Write image as PNG
+        cv2.imwrite(png_path, img)
+
+        print(f"[CONVERTED] {jpg_path} → {png_path}")
+
+    print("\n=== Conversion Completed ===")
+    print(f"Source folder:      {src_dir}")
+    print(f"Output folder:      {dst_dir}")
+
 # Main
 if __name__ == "__main__":
-    # Process imgs
-    rename_and_move_files(
-        input_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Temp/imgs",
-        output_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/imgs",
-        base_name="img",
-        start_num=0
-    )
-    # Process masks
-    rename_and_move_files(
-        input_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Temp/masks",
-        output_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/masks_renamed",
-        base_name="img",
-        start_num=0,
-        suffix="_mask"
-    )
-    binarize_images(
-        input_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/masks_renamed",
-        output_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720/masks",
-        threshold=127
+
+    dataset_mask_filter(
+        image_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720_MaskFilter_05_40/imgs",
+        mask_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720_MaskFilter_05_40/masks",
+        mask_ratio_range=(0.05, 0.40),
     )
