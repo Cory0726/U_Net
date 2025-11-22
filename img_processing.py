@@ -298,11 +298,53 @@ def batch_convert_jpg_to_png(src_dir: str, dst_dir: str):
     print(f"Source folder:      {src_dir}")
     print(f"Output folder:      {dst_dir}")
 
+def convert_folder_to_grayscale(input_dir, output_dir):
+    """
+    Convert all images inside a folder to grayscale and save them to another folder.
+
+    Args:
+        input_dir (str): Path to the input folder containing images.
+        output_dir (str): Path to the output folder for storing converted grayscale images.
+
+    Notes:
+        - Supported formats: .jpg, .jpeg, .png, .bmp, .tiff
+        - Output image keeps original filename.
+    """
+
+    # Create output folder if it does not exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Supported image extensions
+    valid_ext = (".jpg", ".jpeg", ".png", ".bmp", ".tiff")
+
+    # Loop through every file in the input folder
+    for filename in os.listdir(input_dir):
+        if filename.lower().endswith(valid_ext):
+            # Full path to input image
+            img_path = os.path.join(input_dir, filename)
+
+            # Read image
+            img = cv2.imread(img_path)
+            if img is None:
+                print(f"[Warning] Failed to read: {filename}")
+                continue
+
+            # Convert to grayscale
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+            # Full path for output image
+            out_path = os.path.join(output_dir, filename)
+
+            # Save grayscale image
+            cv2.imwrite(out_path, gray)
+
+    print(f"Conversion complete. Grayscale images saved to: {output_dir}")
+
+
 # Main
 if __name__ == "__main__":
-
-    dataset_mask_filter(
-        image_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40/imgs",
-        mask_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40/masks",
-        mask_ratio_range=(0.05, 0.40),
+    convert_folder_to_grayscale(
+        input_dir='C:/Users/User/PycharmProjects/Dataset/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40_GrayScale/origin_imgs',
+        output_dir='C:/Users/User/PycharmProjects/Dataset/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40_GrayScale/imgs'
     )
