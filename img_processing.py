@@ -302,7 +302,7 @@ def batch_convert_jpg_to_png(src_dir: str, dst_dir: str):
 if __name__ == "__main__":
 
     dataset_mask_filter(
-        image_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720_MaskFilter_05_40/imgs",
-        mask_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_960_720_MaskFilter_05_40/masks",
+        image_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40/imgs",
+        mask_dir="C:/Users/lkfu5/PycharmProjects/Dataset/Dataset_Hand/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40/masks",
         mask_ratio_range=(0.05, 0.40),
     )
