@@ -60,6 +60,17 @@ grad_scaler = torch.amp.GradScaler('cuda', enabled=amp)
 - 建議**虛擬記憶體**的起始大小和最大值可以設定成RAM的1倍和2.5倍
 - 舉例 : 電腦的RAM 是 16 GB (1 GB = 1024 MB), 那起始大小就設 16384 MB, 最大值則設 40960 MB
 
+### ImportError: pyexpat
+`ImportError: DLL load failed while importing pyexpat: 找不到指定的模組`
+- Check the `pyexpat` : 
+```commandline
+python -m xml.parsers.expat
+```
+- Solution :
+```commandline
+conda install -c conda-forge libexpat expat --force-reinstall
+```
+
 ## Scripts
 ### train.py
 - By default, the `scale` is **0.5**, so if you wish to obtain better results, set it to **1**. ( but use more memory )
