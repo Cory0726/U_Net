@@ -394,6 +394,8 @@ def darken_grayscale(img, factor=0.5):
 
 # Main
 if __name__ == "__main__":
-    img_target = cv2.imread("test_img/M1_09_intensity_image.png", cv2.IMREAD_GRAYSCALE)
-    img_target = darken_grayscale(img_target, 0.5)
-    cv2.imwrite("test_img/M1_09_intensity_darken05.png", img_target)
+    img_target = cv2.imread("test_img/M1_01_intensity_image.png", cv2.IMREAD_GRAYSCALE)
+    print(np.max(img_target), np.min(img_target))
+    cv2.imwrite("test_img/M1_01_intensity_grayscale.png", img_target)
+    # img_target = darken_grayscale(img_target, 0.5)
+    # cv2.imwrite("test_img/M1_09_intensity_darken05.png", img_target)
