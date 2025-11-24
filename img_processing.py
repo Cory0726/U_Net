@@ -341,10 +341,59 @@ def convert_folder_to_grayscale(input_dir, output_dir):
 
     print(f"Conversion complete. Grayscale images saved to: {output_dir}")
 
+def match_brightness_mean(img_ref, img_target):
+    """
+    Adjust grayscale brightness of img_target to match img_ref using mean intensity matching.
+    """
+    # convert to float for safe scaling
+    img_ref_f = img_ref.astype(np.float32)
+    img_target_f = img_target.astype(np.float32)
+
+    mean_ref = img_ref_f.mean()
+    mean_target = img_target_f.mean()
+
+    # avoid division by zero
+    if mean_target < 1e-6:
+        raise ValueError("Target image has zero mean brightness.")
+
+    scale = mean_ref / mean_target
+
+    # scale target image
+    img_adj = img_target_f * scale
+
+    # clip to valid range [0, 255]
+    img_adj = np.clip(img_adj, 0, 255).astype(np.uint8)
+
+    return img_adj
+
+def darken_grayscale(img, factor=0.5):
+    """
+    Darken a grayscale image by multiplying with a factor.
+
+    Args:
+        img (np.ndarray): Input grayscale image (values range 0–255).
+        factor (float): Brightness multiplier.
+                        - 1.0 = no change
+                        - 0.5 = darken by 50%
+                        - 0.2 = darken by 80%
+
+    Returns:
+        np.ndarray: Darkened grayscale image.
+    """
+    # Convert image to float for safe multiplication
+    img_f = img.astype(np.float32)
+
+    # Apply brightness scaling
+    img_dark = img_f * factor
+
+    # Clip values back to valid grayscale range
+    img_dark = np.clip(img_dark, 0, 255).astype(np.uint8)
+
+    return img_dark
+
 
 # Main
 if __name__ == "__main__":
-    convert_folder_to_grayscale(
-        input_dir='C:/Users/User/PycharmProjects/Dataset/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40_GrayScale/origin_imgs',
-        output_dir='C:/Users/User/PycharmProjects/Dataset/Process_EGTEA_Gaze_plus_640_480_MaskFilter_05_40_GrayScale/imgs'
-    )
+    img_target = cv2.imread("test_img/M1_09_intensity_image.png", cv2.IMREAD_GRAYSCALE)
+    img_target = darken_grayscale(img_target, 0.5)
+    cv2.imwrite("test_img/M1_09_intensity_darken05.png", img_target)
