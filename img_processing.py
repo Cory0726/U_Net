@@ -391,11 +391,51 @@ def darken_grayscale(img, factor=0.5):
 
     return img_dark
 
+def apply_mask_keep_black(img, mask):
+    """
+    Keep only the black regions of the mask.
 
-# Main
+    Args:
+        img: numpy array, RGB or grayscale image.
+        mask: numpy array, grayscale mask (0 = keep, 255 = remove)
+
+    Returns:
+        output: numpy array, masked image.
+    """
+
+    # Ensure mask is grayscale
+    if len(mask.shape) == 3:
+        mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+
+    # Convert mask to binary (black = keep, white = remove)
+    _, mask_bin = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
+
+    # Black = keep → mask_bin == 0
+    keep_mask = (mask_bin == 0).astype(np.uint8)
+
+    # Expand to 3 channels if image is RGB
+    if len(img.shape) == 3 and img.shape[2] == 3:
+        keep_mask = keep_mask[:, :, None]
+
+    # Apply mask
+    output = img * keep_mask
+
+    return output
+
+def array_info(arr):
+    return f'Shape{arr.shape}, Max: {arr.max()}, Min: {arr.min()}, Avg: {arr.mean():f}, {arr.dtype}'
+
+def main():
+    img = cv2.imread('test_img/M1_01_intensity_grayscale.png', cv2.IMREAD_UNCHANGED)
+    print('GrayScale Image : ' + array_info(img))
+    mask = cv2.imread('test_img/M1_01_intensity_grayscale_OUT.png', cv2.IMREAD_UNCHANGED)
+    print('Mask Image : ' + array_info(mask))
+    Seg_image = apply_mask_keep_black(img, mask)
+    print('Seg Image : ' + array_info(Seg_image))
+    cv2.imshow('Seg Image', Seg_image)
+    cv2.waitKey(0)
+
+
+
 if __name__ == "__main__":
-    img_target = cv2.imread("test_img/M1_01_intensity_image.png", cv2.IMREAD_GRAYSCALE)
-    print(np.max(img_target), np.min(img_target))
-    cv2.imwrite("test_img/M1_01_intensity_grayscale.png", img_target)
-    # img_target = darken_grayscale(img_target, 0.5)
-    # cv2.imwrite("test_img/M1_09_intensity_darken05.png", img_target)
+    main()
