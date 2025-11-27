@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from PIL import Image, ImageEnhance
-
+import cv2
 from utils.data_loading import BasicDataset
 from unet import UNet
 
@@ -90,13 +90,13 @@ def run_predict(
     return mask_to_image(mask, mask_values)
 def main():
     # Load image
-    img = Image.open('test_img/M1_01_intensity_grayscale.png')
+    img = Image.open('test_img/img_01278.png')
 
     # Final mask
     final_mask_np = None
 
-    # Adjust the brightness of the image 50 - 95 %
-    brightness_levels = [i/100 for i in range(50, 96, 5)]
+    # Adjust the brightness of the image 65 - 95 %
+    brightness_levels = [i/100 for i in range(65, 96, 5)]
     print(f'brightness_levels: {brightness_levels}')
 
     for b in brightness_levels:
@@ -136,8 +136,4 @@ def main():
     final_mask.save(f'result_mask/final_mask.png')
 
 if __name__ == '__main__':
-    img = Image.open('test_img/M1_01_intensity_grayscale.png')
-    img_np = np.array(img)
-    print(img_np.shape, img_np.dtype, img_np.max(), img_np.min())
-
     main()
