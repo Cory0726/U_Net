@@ -1,16 +1,12 @@
 import argparse
 import logging
-import os
-
 import numpy as np
 import torch
 import torch.nn.functional as F
-from PIL import Image
-from torchvision import transforms
+from PIL import Image, ImageEnhance
 
 from utils.data_loading import BasicDataset
 from unet import UNet
-from utils.utils import plot_img_and_mask
 
 def predict_img(net,
                 full_img,
@@ -59,8 +55,8 @@ def mask_to_image(mask: np.ndarray, mask_values):
     return Image.fromarray(out)
 
 def run_predict(
-        input_img_file,
-        model = 'trained_weight/Hand_Seg_EGTEA_plus_S640480G_Scale05_Score08994_20251123.pth',
+        img,
+        model,
         scale=0.5,
         num_of_channels = 1,
         num_of_classes = 2,
@@ -92,8 +88,56 @@ def run_predict(
                         device=device)
     # Return mask
     return mask_to_image(mask, mask_values)
+def main():
+    # Load image
+    img = Image.open('test_img/M1_01_intensity_grayscale.png')
 
+    # Final mask
+    final_mask_np = None
 
+    # Adjust the brightness of the image 50 - 95 %
+    brightness_levels = [i/100 for i in range(50, 96, 5)]
+    print(f'brightness_levels: {brightness_levels}')
+
+    for b in brightness_levels:
+        print(f'Processing brightness: {b:.2f}')
+
+        enhancer = ImageEnhance.Brightness(img)
+        img_bright = enhancer.enhance(b)
+
+        # Predict the mask by U-Net model
+        result_mask = run_predict(
+            img=img_bright,
+            model='trained_weight/Hand_Seg_EGTEA_plus_S640480G_Scale05_Score08994_20251123.pth',
+            scale=0.5,
+            num_of_channels=1,
+            num_of_classes=2,
+            mask_threshold=0.5,
+            bilinear=False,
+        )
+
+        # Save images and masks at different brightness levels
+        output_img_path = f'image_process_temp/img_brightness_{int(b*100):3d}.png'
+        output_mask_path = f'image_process_temp/mask_brightness_{int(b*100):3d}.png'
+        img_bright.save(output_img_path)
+        print(f'Saved: {output_img_path}')
+        result_mask.save(output_mask_path)
+        print(f'Saved: {output_mask_path}')
+
+        # Mask convert to numpy type
+        mask_np = np.array(result_mask)
+        # Pixel-wise OR merging
+        if final_mask_np is None:
+            final_mask_np = mask_np.copy()
+        else:
+            final_mask_np = np.maximum(final_mask_np, mask_np)
+    # Save the final mask
+    final_mask = Image.fromarray(final_mask_np)
+    final_mask.save(f'result_mask/final_mask.png')
 
 if __name__ == '__main__':
-    run_predict()
+    img = Image.open('test_img/M1_01_intensity_grayscale.png')
+    img_np = np.array(img)
+    print(img_np.shape, img_np.dtype, img_np.max(), img_np.min())
+
+    main()

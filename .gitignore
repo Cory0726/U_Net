@@ -8,3 +8,4 @@ __pycache__/
 wandb/
 >>>>>>> 2e0e112b25809a4509d2130486538fbe6a22d2e3
 test_img/
+image_process_temp/
