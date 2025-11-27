@@ -1,4 +1,3 @@
-import argparse
 import logging
 import numpy as np
 import torch
@@ -88,9 +87,37 @@ def run_predict(
                         device=device)
     # Return mask
     return mask_to_image(mask, mask_values)
+
+def keep_largest_component(mask: np.ndarray) -> np.ndarray:
+    """
+    mask: shape (H,W), pixel values = 0 or 255
+    return: shape (H,W), pixel values = 0 or 255, keeping only largest connected component
+    """
+
+    # Convert 255 to 1 for connected component processing
+    mask_bin = (mask > 0).astype('uint8')
+
+    # Connected components
+    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(mask_bin, connectivity=8)
+
+    # If no foreground region exists, just return original
+    if num_labels <= 1:
+        return mask
+
+    # Foreground areas (skip label 0 which is background)
+    areas = stats[1:, cv2.CC_STAT_AREA]
+
+    # The largest connected component label index (need +1 because we skipped background)
+    largest_label = 1 + np.argmax(areas)
+
+    # Build the output mask
+    largest_mask = (labels == largest_label).astype('uint8') * 255
+
+    return largest_mask
+
 def main():
     # Load image
-    img = Image.open('test_img/img_01278.png')
+    img = Image.open('test_img/M1_15_intensity_image_grayscale.png')
 
     # Final mask
     final_mask_np = None
@@ -131,9 +158,13 @@ def main():
             final_mask_np = mask_np.copy()
         else:
             final_mask_np = np.maximum(final_mask_np, mask_np)
+
+    # Keep the largest component of the final mask
+    final_mask_np = keep_largest_component(final_mask_np)
     # Save the final mask
     final_mask = Image.fromarray(final_mask_np)
     final_mask.save(f'result_mask/final_mask.png')
+    print(f'Saved: result_mask/final_mask.png')
 
 if __name__ == '__main__':
     main()
