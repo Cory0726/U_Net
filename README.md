@@ -17,10 +17,7 @@ My notes for U-Net.
     ```
   - Other
     ```bash
-    conda install conda-forge::wandb
-    conda install conda-forge::tqdm
-    conda install conda-forge::matplotlib
-    conda install -c anaconda opencv
+    pip install wandb, tqdm, matplotlib, opencv-python
     ```
 - Env file: *environment.yaml*
 
